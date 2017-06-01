@@ -1,11 +1,11 @@
 select
 
   profile_details.*,
-  case when profile_details.profile_group%10000>0 and profile_details.profile_group>9999 then 'Both Regular and Kids/Teens'
-       when profile_details.profile_group%10000>0 and profile_details.profile_group<10000 then 'Kids/Teens Only'
-       when profile_details.profile_group%10000=0 and profile_details.profile_group>9999 then 'Regular Only'
+  case when profile_details.profile_group>10000 then 'Both Regular and Kids/Teens'
+       when profile_details.profile_group<10000 then 'Kids/Teens Only'
+       when profile_details.profile_group=10000 then 'Regular Only'
        end as profile_grp1,
-  
+  case when 
   contact_details.call_center_desc,
   contact_details.country_desc,
   contact_details.contact_origin_country_code,
@@ -42,7 +42,8 @@ case when experience_type in ('Unknown','regular') then 10000
      when experience_type='just_for_kids' and maturity_level_desc='TEENS' then 100
      when experience_type='just_for_kids' and maturity_level_desc='OLDER_KIDS' then 10
      when experience_type='just_for_kids' and maturity_level_desc='LITTLE_KIDS' then 1
-     else 0 end as profile_group_tmp
+     else 0 end as profile_group_tmp,
+count(*) as count_tmp 
 from dse.profile_d
 where profile_type='streaming'
 and profile_first_use_flag is not null
@@ -50,7 +51,14 @@ and membership_status_id=2
 -- feb 28, 2017
 and create_ts<1488326399000
 and is_deleted_by_user=0
-and is_deleted_from_source is null) a
+and is_deleted_from_source is null
+group by account_id,
+case when experience_type in ('Unknown','regular') then 10000
+     when experience_type='just_for_kids' and maturity_level_desc='ADULTS' then 1000
+     when experience_type='just_for_kids' and maturity_level_desc='TEENS' then 100
+     when experience_type='just_for_kids' and maturity_level_desc='OLDER_KIDS' then 10
+     when experience_type='just_for_kids' and maturity_level_desc='LITTLE_KIDS' then 1
+     else 0 end) a
 group by account_id) profile_details
 
 join
