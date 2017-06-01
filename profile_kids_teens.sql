@@ -1,5 +1,5 @@
-
-select profile_contact_details.*,
+select 
+profile_contact_details.*,
 stream_details.view_dateint
 
 from
