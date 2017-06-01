@@ -1,5 +1,6 @@
 
 select profile_contact_details.*,
+stream_details.view_dateint
 
 from
 
@@ -128,3 +129,5 @@ on profile_details.account_id=contact_details.account_id
 ) profile_contact_details
 
 on stream_details.account_id=profile_contact_details.account_id
+
+where date_diff('day', date_parse(cast(stream_details.view_dateint as varchar), '%Y%m%d'),  date_parse(cast(profile_contact_details.fact_utc_date as varchar), '%Y%m%d')) between 0 and 7
