@@ -1,4 +1,22 @@
-select
+
+select profile_contact_details.*,
+
+from
+
+(select account_id, view_dateint
+from
+vault.playback_session_f a
+join
+dse.ttl_title_d b
+on a.title_id=b.title_id
+where b.show_analytic_genre_desc='Kids'
+and a.view_dateint>=20170215
+ 
+) stream_details
+
+join
+
+(select
 
   profile_details.*,
   case when profile_details.profile_group>10000 then 'Both Regular and Kids/Teens'
@@ -106,3 +124,7 @@ join
 ) contact_details
 
 on profile_details.account_id=contact_details.account_id
+ 
+) profile_contact_details
+
+on stream_details.account_id=profile_contact_details.account_id
