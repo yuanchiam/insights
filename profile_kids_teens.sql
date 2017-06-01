@@ -74,7 +74,7 @@ case when experience_type in ('Unknown','regular') then 10000
      when experience_type='just_for_kids' and maturity_level_desc='OLDER_KIDS' then 10
      when experience_type='just_for_kids' and maturity_level_desc='LITTLE_KIDS' then 1
      else 0 end) a
-where sum(a.profile_group_tmp)>0
+having sum(a.profile_group_tmp)>0
 group by account_id) profile_details
 
 join
